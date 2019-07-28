@@ -1,19 +1,23 @@
-import { Controller, Get } from '@nestjs/common';
-//import service
-import {TasksService} from './tasks.service';
+//import body decorator
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { TasksService } from './tasks.service';
+import { Task } from './tasks.model';
 
 @Controller('tasks')
 export class TasksController {
 
-    //create a private taskService class propety of type class Service
-    //TaskService will be instantitated and injected
-    constructor(private taskService: TasksService){}
+    constructor(private taskService: TasksService) { }
 
-    //our method to get all task from service
     @Get()
-    getAllTask(){
+    getAllTask(): Task[] {
         return this.taskService.getAllTask();
     }
 
+    // use  @post decorator
+    @Post() // decorate our body with the body decorator, specify the key in the request body inside our decorator
+    createTask(@Body('title') title: string, @Body('description') description: string): Task { //using typescript return a Task
+        // call our createTask() from our taskService
+        return this.taskService.createTask(title, description);
+    }
 
 }

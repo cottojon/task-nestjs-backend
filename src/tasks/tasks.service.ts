@@ -1,14 +1,36 @@
 import { Injectable } from '@nestjs/common';
+import { Task, TaskStatus } from './tasks.model';
+import * as uuid from 'uuid/v1'; // import everything as uuid from uuid/v1
 
-@Injectable() //makes it available for injection in other components
+@Injectable()
 export class TasksService {
-    //store task in array for now
-    private tasks = []; //make it private so only this class can make changes to the task array directly. we want only the service to do so
+    private tasks: Task[] = [];
 
 
-    //create a get all task method to return all task to the Contoller
-    getAllTask(){
+    getAllTask(): Task[] {
         return this.tasks;
+    }
+
+
+    // need two parameters a title and description
+    createTask(title: string, description: string): Task { // return a task using typescript
+        // create a object of type task
+        // in ES6, we are using a shorthand syntax to define our key and values when they have the same identifier
+        const task: Task = {
+            id: uuid(), // generate uuid using the uuid()
+            title,
+            description,
+            status: TaskStatus.OPEN,
+        }
+
+        // add to our tasks array
+        this.tasks.push(task);
+
+        // a good practice to return the newly created resource in a REST api
+        // frontend dev will love you for this
+        // the reason being after a task has been created
+        // the front end does not have to ask for all of the task again to check if a task has actually been created
+        return task;
     }
 
 }
