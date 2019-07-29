@@ -1,7 +1,7 @@
-//import body decorator
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { Task } from './tasks.model';
+import { Task, TaskStatus } from './tasks.model'; 
+import { CreateTaskDTO } from './dto/create-task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -13,11 +13,31 @@ export class TasksController {
         return this.taskService.getAllTask();
     }
 
-    // use  @post decorator
-    @Post() // decorate our body with the body decorator, specify the key in the request body inside our decorator
-    createTask(@Body('title') title: string, @Body('description') description: string): Task { //using typescript return a Task
-        // call our createTask() from our taskService
-        return this.taskService.createTask(title, description);
+   
+    @Post() 
+    createTask(@Body() createTaskDto: CreateTaskDTO): Task { 
+        
+        return this.taskService.createTask(createTaskDto); 
     }
+
+
+ 
+    @Get('/:id') 
+    getTaskByID(@Param('id') id: string): Task{ 
+        return this.taskService.getTaskByID(id);
+    }
+
+
+    @Delete('/:id')
+    deleteTaskByID(@Param('id') id: string): void{
+        this.taskService.deleteTaskByID(id);
+    }
+
+    //our patch handler
+    @Patch('/:id/status') //our url with a id passed in 
+    updateTaskStatusByID(@Param('id') id: string, @Body('status') status: TaskStatus): Task {
+        return this.taskService.updateTaskStatus(id, status); //update task
+    }
+
 
 }
