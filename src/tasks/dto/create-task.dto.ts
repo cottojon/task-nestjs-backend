@@ -1,8 +1,11 @@
-export class CreateTaskDTO {
-    //when creating a DTO we need to think about the first point where we receive our data
-    //that would be the handler in the controller (http post request body)
-    //we need a title and description
+// import our decortors
+import { IsNotEmpty } from 'class-validator';
 
+
+export class CreateTaskDTO {
+    @IsNotEmpty() // apply decorator to our class properties
     title: string;
+
+    @IsNotEmpty()
     description: string;
 }
