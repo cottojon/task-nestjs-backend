@@ -1,4 +1,3 @@
-// import our decortors
 import { IsNotEmpty } from 'class-validator';
 
 

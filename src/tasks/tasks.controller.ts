@@ -3,14 +3,15 @@ import { TasksService } from './tasks.service';
 import { Task, TaskStatus } from './tasks.model';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
+import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
 
 @Controller('tasks')
 export class TasksController {
 
     constructor(private taskService: TasksService) { }
 
-    @Get()
-    getTasks(@Query() filterDto: GetTaskFilterDto): Task[] {
+    @Get()// add validationpipe to @Query as a parameter
+    getTasks(@Query(ValidationPipe) filterDto: GetTaskFilterDto): Task[] {
 
         if (Object.keys(filterDto).length) {
             return this.taskService.getTasksWithFilters(filterDto);
@@ -20,7 +21,7 @@ export class TasksController {
     }
 
     @Post()
-    @UsePipes(ValidationPipe) // decorate our handler, and use the ValidationPipe
+    @UsePipes(ValidationPipe) 
     createTask(@Body() createTaskDto: CreateTaskDTO): Task {
 
         return this.taskService.createTask(createTaskDto);
@@ -36,8 +37,8 @@ export class TasksController {
         this.taskService.deleteTaskByID(id);
     }
 
-    @Patch('/:id/status')
-    updateTaskStatusByID(@Param('id') id: string, @Body('status') status: TaskStatus): Task {
+    @Patch('/:id/status') 
+    updateTaskStatusByID(@Param('id') id: string, @Body('status', TaskStatusValidationPipe) status: TaskStatus): Task {
         return this.taskService.updateTaskStatus(id, status);
     }
 
