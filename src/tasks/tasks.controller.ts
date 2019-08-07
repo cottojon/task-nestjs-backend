@@ -1,14 +1,24 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe, ParseIntPipe } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
+//import task 
+import {Task} from './task.entity';
+
 
 @Controller('tasks')
 export class TasksController {
 
     constructor(private taskService: TasksService) { }
 
+    @Get('/:id') // id is not longer a string but a number, so let us use the built in ParseIntPipe for data transformation
+    getTaskByID(@Param('id', ParseIntPipe) id: number): Promise<Task> {
+        return this.taskService.getTaskByID(id);
+    }
+
+
+    // comment out the other handlers for now
     /*
     @Get()// add validationpipe to @Query as a parameter
     getTasks(@Query(ValidationPipe) filterDto: GetTaskFilterDto): Task[] {
@@ -27,10 +37,7 @@ export class TasksController {
         return this.taskService.createTask(createTaskDto);
     }
 
-    @Get('/:id')
-    getTaskByID(@Param('id') id: string): Task {
-        return this.taskService.getTaskByID(id);
-    }
+   
 
     @Delete('/:id')
     deleteTaskByID(@Param('id') id: string): void {

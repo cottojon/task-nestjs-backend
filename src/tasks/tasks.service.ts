@@ -2,11 +2,34 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import * as uuid from 'uuid/v1';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
+import { TaskRepository } from './task.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Task } from './task.entity';
 @Injectable()
 export class TasksService {
-   
-   
- 
+
+    // inject taskRepo and decorate with proper decorator and provide it the repo we want to inject
+    constructor(@InjectRepository(TaskRepository) private taskRepository: TaskRepository) { }
+
+    // this is a async method: it has one or more async operation in it, always return a Promise<>
+    async getTaskByID(id: number): Promise<Task> { // id is no longer a string but a number
+        // retrieve the task
+        const found = await this.taskRepository.findOne(id); // findOne can handle more parameters
+        // every operation with the database is async
+        // thus, we do not know when it will end
+        // so we use await: this will stop execution and await for our async operation to finish
+        // making it a 'synchronous' operation
+
+        if (!found) {
+            throw new NotFoundException(`Task with ID ${id} not found.`);
+        }
+
+
+        return found; // findOne returns a Promise<Task>
+    }
+
+
+    // comment the other methods our for now
     /*
     getAllTask(): Task[] {
         return this.tasks;
@@ -44,18 +67,7 @@ export class TasksService {
     }
 
 
-    getTaskByID(id: string) {
-        const found = this.tasks.find(task => {
-            return task.id === id;
-        });
-
-        if (!found) {
-            throw new NotFoundException(`Task with ID ${id} not found.`); 
-        }
-
-
-        return found;
-    }
+    
 
     deleteTaskByID(id: string): void {
         //get task by id
