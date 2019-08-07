@@ -5,27 +5,28 @@ import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskRepository } from './task.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './task.entity';
+import { TaskStatus } from './task-status-enum';
 @Injectable()
 export class TasksService {
 
-    // inject taskRepo and decorate with proper decorator and provide it the repo we want to inject
+
+
     constructor(@InjectRepository(TaskRepository) private taskRepository: TaskRepository) { }
 
-    // this is a async method: it has one or more async operation in it, always return a Promise<>
-    async getTaskByID(id: number): Promise<Task> { // id is no longer a string but a number
-        // retrieve the task
-        const found = await this.taskRepository.findOne(id); // findOne can handle more parameters
-        // every operation with the database is async
-        // thus, we do not know when it will end
-        // so we use await: this will stop execution and await for our async operation to finish
-        // making it a 'synchronous' operation
+    async createTask(createTaskDto: CreateTaskDTO): Promise<Task> {  
+        return this.taskRepository.createTask(createTaskDto); // call our createTask method from taskRepo
+    }
+
+    async getTaskByID(id: number): Promise<Task> { 
+        const found = await this.taskRepository.findOne(id); 
+        
 
         if (!found) {
             throw new NotFoundException(`Task with ID ${id} not found.`);
         }
 
 
-        return found; // findOne returns a Promise<Task>
+        return found; 
     }
 
 
@@ -51,20 +52,7 @@ export class TasksService {
         return tasks;
     }
 
-    createTask(createTaskDto: CreateTaskDTO): Task {  
-        const { title, description } = createTaskDto;
-
-        const task: Task = {
-            id: uuid(),
-            title,
-            description,
-            status: TaskStatus.OPEN,
-        };
-
-        this.tasks.push(task);
-
-        return task;
-    }
+    
 
 
     

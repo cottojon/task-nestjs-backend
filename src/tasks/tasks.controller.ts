@@ -12,10 +12,18 @@ export class TasksController {
 
     constructor(private taskService: TasksService) { }
 
-    @Get('/:id') // id is not longer a string but a number, so let us use the built in ParseIntPipe for data transformation
+    @Get('/:id') 
     getTaskByID(@Param('id', ParseIntPipe) id: number): Promise<Task> {
         return this.taskService.getTaskByID(id);
     }
+
+    @Post()
+    @UsePipes(ValidationPipe) // change return type to promise
+    createTask(@Body() createTaskDto: CreateTaskDTO): Promise<Task> {
+
+        return this.taskService.createTask(createTaskDto);
+    }
+
 
 
     // comment out the other handlers for now
@@ -30,13 +38,7 @@ export class TasksController {
         return this.taskService.getAllTask();
     }
 
-    @Post()
-    @UsePipes(ValidationPipe) 
-    createTask(@Body() createTaskDto: CreateTaskDTO): Task {
-
-        return this.taskService.createTask(createTaskDto);
-    }
-
+   
    
 
     @Delete('/:id')
