@@ -1,5 +1,5 @@
 import { PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { TaskStatus } from '../tasks.model';
+import { TaskStatus } from '../task-status-enum';
 
 export class TaskStatusValidationPipe implements PipeTransform {
     // readonly is a var that can not be modified even during run time by the class members

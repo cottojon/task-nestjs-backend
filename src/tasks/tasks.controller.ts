@@ -5,6 +5,7 @@ import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
 //import task 
 import {Task} from './task.entity';
+import { TaskStatus } from './task-status-enum';
 
 
 @Controller('tasks')
@@ -18,12 +19,23 @@ export class TasksController {
     }
 
     @Post()
-    @UsePipes(ValidationPipe) // change return type to promise
+    @UsePipes(ValidationPipe) 
     createTask(@Body() createTaskDto: CreateTaskDTO): Promise<Task> {
 
         return this.taskService.createTask(createTaskDto);
     }
 
+    @Delete('/:id')// parse the id to int 
+    deleteTaskByID(@Param('id', ParseIntPipe) id: number): Promise<void> {
+        return this.taskService.deleteTaskByID(id); //return a promise or we will have an uncatched promise error when err handling
+    }
+
+
+
+    @Patch('/:id/status') 
+    updateTaskStatusByID(@Param('id', ParseIntPipe) id: number, @Body('status', TaskStatusValidationPipe) status: TaskStatus): Promise<Task> {
+        return this.taskService.updateTaskStatus(id, status);
+    }
 
 
     // comment out the other handlers for now
@@ -36,19 +48,6 @@ export class TasksController {
         }
 
         return this.taskService.getAllTask();
-    }
-
-   
-   
-
-    @Delete('/:id')
-    deleteTaskByID(@Param('id') id: string): void {
-        this.taskService.deleteTaskByID(id);
-    }
-
-    @Patch('/:id/status') 
-    updateTaskStatusByID(@Param('id') id: string, @Body('status', TaskStatusValidationPipe) status: TaskStatus): Task {
-        return this.taskService.updateTaskStatus(id, status);
     }
 
     */
