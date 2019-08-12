@@ -31,58 +31,26 @@ export class TasksService {
     }
 
 
-    async deleteTaskByID(id: number): Promise<void> { // don't return anything
+    async deleteTaskByID(id: number): Promise<void> { 
        
         
-        //we will use the delete method in Repository class
-        const result = await this.taskRepository.delete(id); //returns a DeleteResult
-        //if we did not delete anything throw exception
-        if(result.affected === 0) { //amount of affected rows
+        const result = await this.taskRepository.delete(id); 
+        if(result.affected === 0) { 
             throw new NotFoundException(`Task with ID ${id} not found.`);
         }
 
     }
 
     async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
-        //retrieve task
-        const task = await this.getTaskByID(id); //return a Promise<Task>
+        const task = await this.getTaskByID(id); 
         task.status = status;
-        //save it
+    
         await task.save();
         return task;
     }
 
-    // comment the other methods our for now
-    /*
-    getAllTask(): Task[] {
-        return this.tasks;
+    async getTask(filterDto: GetTaskFilterDto): Promise<Task[]>{ //return task array
+        return await this.taskRepository.getTask(filterDto); //call our getTAsk method
     }
-
-    getTasksWithFilters(filterDto: GetTaskFilterDto): Task[] {
-
-        const { status, search } = filterDto;
-        let tasks = this.getAllTask();
-
-        if (status) {
-            tasks = tasks.filter(task => task.status === status);
-        }
-
-        if (search) {
-            tasks = tasks.filter(task => task.title.includes(search) || task.description.includes(search));
-        }
-
-        return tasks;
-    }
-
-    
-
-
-    
-
- 
-
-   
-
-    */
 
 }

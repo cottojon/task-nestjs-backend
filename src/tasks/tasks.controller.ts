@@ -38,17 +38,11 @@ export class TasksController {
     }
 
 
-    // comment out the other handlers for now
-    /*
+   
     @Get()// add validationpipe to @Query as a parameter
-    getTasks(@Query(ValidationPipe) filterDto: GetTaskFilterDto): Task[] {
+    getTasks(@Query(ValidationPipe) filterDto: GetTaskFilterDto): Promise<Task[]> { //return task array
 
-        if (Object.keys(filterDto).length) {
-            return this.taskService.getTasksWithFilters(filterDto);
-        }
-
-        return this.taskService.getAllTask();
+        return this.taskService.getTask(filterDto);
     }
 
-    */
 }
