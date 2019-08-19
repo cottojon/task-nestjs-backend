@@ -1,14 +1,16 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
-//import task 
 import {Task} from './task.entity';
 import { TaskStatus } from './task-status-enum';
+//import authguard from passport
+import { AuthGuard } from '@nestjs/passport';
 
 
 @Controller('tasks')
+@UseGuards(AuthGuard()) // apply guard to how controller/ all the routes
 export class TasksController {
 
     constructor(private taskService: TasksService) { }
@@ -25,9 +27,9 @@ export class TasksController {
         return this.taskService.createTask(createTaskDto);
     }
 
-    @Delete('/:id')// parse the id to int 
+    @Delete('/:id')
     deleteTaskByID(@Param('id', ParseIntPipe) id: number): Promise<void> {
-        return this.taskService.deleteTaskByID(id); //return a promise or we will have an uncatched promise error when err handling
+        return this.taskService.deleteTaskByID(id); 
     }
 
 
@@ -39,7 +41,7 @@ export class TasksController {
 
 
    
-    @Get()// add validationpipe to @Query as a parameter
+    @Get()
     getTasks(@Query(ValidationPipe) filterDto: GetTaskFilterDto): Promise<Task[]> { //return task array
 
         return this.taskService.getTask(filterDto);
