@@ -7,6 +7,8 @@ import {Task} from './task.entity';
 import { TaskStatus } from './task-status-enum';
 //import authguard from passport
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from '../auth/user.entity';
 
 
 @Controller('tasks')
@@ -21,10 +23,10 @@ export class TasksController {
     }
 
     @Post()
-    @UsePipes(ValidationPipe) 
-    createTask(@Body() createTaskDto: CreateTaskDTO): Promise<Task> {
+    @UsePipes(ValidationPipe) // User was attached by passport after validating our jwt token
+    createTask(@Body() createTaskDto: CreateTaskDTO, @GetUser() user: User): Promise<Task> {
 
-        return this.taskService.createTask(createTaskDto);
+        return this.taskService.createTask(createTaskDto, user);
     }
 
     @Delete('/:id')
@@ -41,10 +43,10 @@ export class TasksController {
 
 
    
-    @Get()
-    getTasks(@Query(ValidationPipe) filterDto: GetTaskFilterDto): Promise<Task[]> { //return task array
+    @Get() // add user parameter
+    getTasks(@Query(ValidationPipe) filterDto: GetTaskFilterDto, @GetUser() user: User): Promise<Task[]> { //return task array
 
-        return this.taskService.getTask(filterDto);
+        return this.taskService.getTask(filterDto, user);
     }
 
 }
