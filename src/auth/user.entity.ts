@@ -1,5 +1,6 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, Unique, OneToMany } from 'typeorm';
 import * as brcrypt from 'bcrypt';
+import { Task } from '../tasks/task.entity';
 // import bcrypt
 
 
@@ -18,6 +19,13 @@ export class User extends BaseEntity{
 
     @Column()
     salt: string;
+
+    // every user can relate to many task
+    // first the decorator need the type
+    // second how can we access the user that owns the task
+    // third we can provide relationship options
+    @OneToMany(type => Task, task => task.user, {eager: true})
+    tasks: Task[];
 
     // custom method to run business logic for a specific instance of a user
     // return true if password is correct
