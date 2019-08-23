@@ -1,7 +1,10 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Body, ValidationPipe } from '@nestjs/common';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { AuthService } from './auth.service';
 
+
+
+// we can also apply guarding at the controller level here 
 @Controller('auth')
 export class AuthController {
 
@@ -19,4 +22,7 @@ export class AuthController {
     signIn(@Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto): Promise<{accessToken: string}>{
         return this.authService.signIn(authCredentialsDto);
     }
+
+
+
 }

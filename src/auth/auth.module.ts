@@ -18,7 +18,7 @@ import { JwtStrategy } from './jwt.strategy';
     }),
     TypeOrmModule.forFeature([UserRepository])],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy], // add jwt strategy
+  providers: [AuthService, JwtStrategy], // add jwt strategy so it can be dependency injected across this module by nestjs
   exports: [JwtStrategy, PassportModule] // add to exports so the task module can use it to guard crud operations
 })
 export class AuthModule { }
