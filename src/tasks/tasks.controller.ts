@@ -17,9 +17,9 @@ export class TasksController {
 
     constructor(private taskService: TasksService) { }
 
-    @Get('/:id') 
-    getTaskByID(@Param('id', ParseIntPipe) id: number): Promise<Task> {
-        return this.taskService.getTaskByID(id);
+    @Get('/:id') // add getuser decorator
+    getTaskByID(@Param('id') id: number, ParseIntPipe, @GetUser() user: User): Promise<Task> {
+        return this.taskService.getTaskByID(id, user);
     }
 
     @Post()
@@ -30,16 +30,17 @@ export class TasksController {
     }
 
     @Delete('/:id')
-    deleteTaskByID(@Param('id', ParseIntPipe) id: number): Promise<void> {
-        return this.taskService.deleteTaskByID(id); 
+    deleteTaskByID(@Param('id', ParseIntPipe) id: number, @GetUser() user: User): Promise<void> {
+        return this.taskService.deleteTaskByID(id, user); 
     }
 
 
 
     @Patch('/:id/status') 
-    updateTaskStatusByID(@Param('id', ParseIntPipe) id: number, @Body('status', TaskStatusValidationPipe) status: TaskStatus): Promise<Task> {
-        return this.taskService.updateTaskStatus(id, status);
+    updateTaskStatusByID(@Param('id', ParseIntPipe) id: number, @Body('status', TaskStatusValidationPipe) status: TaskStatus, @GetUser() user: User): Promise<Task> {
+       return this.taskService.updateTaskStatus(id, status, user);
     }
+
 
 
    

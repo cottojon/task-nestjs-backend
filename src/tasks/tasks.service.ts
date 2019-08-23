@@ -19,8 +19,12 @@ export class TasksService {
         return this.taskRepository.createTask(createTaskDto, user); // call our createTask method from taskRepo
     }
 
-    async getTaskByID(id: number): Promise<Task> { 
-        const found = await this.taskRepository.findOne(id); 
+    //add user parameter
+    async getTaskByID(id: number, user: User): Promise<Task> { 
+        // now we need to use a where clause because we want to find a task by two query criteria
+        const found = await this.taskRepository.findOne({where: {id, //the taskId
+                                                                userId: user.id} //the userId
+                                                            }); 
         
 
         if (!found) {
@@ -32,18 +36,20 @@ export class TasksService {
     }
 
 
-    async deleteTaskByID(id: number): Promise<void> { 
+    async deleteTaskByID(id: number, user: User): Promise<void> { 
        
-        
-        const result = await this.taskRepository.delete(id); 
+        // the delte method accepts a object that translates into where clauses
+        // notice unlinke findOne we do not need to specifc 'where'
+        const result = await this.taskRepository.delete({ id, userId: user.id}); 
         if(result.affected === 0) { 
             throw new NotFoundException(`Task with ID ${id} not found.`);
         }
 
     }
 
-    async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
-        const task = await this.getTaskByID(id); 
+  
+    async updateTaskStatus(id: number, status: TaskStatus, user: User): Promise<Task> {
+        const task = await this.getTaskByID(id, user); 
         task.status = status;
     
         await task.save();
